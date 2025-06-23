@@ -23,6 +23,7 @@ visualizer.show_ionogram(
     dpi=150
 )
 ```
+
 ## Как использовать файл со скриптом 
 ```
 python script.py test_data/01_02_07_20_00.dat --grid_alpha 0.5 --tick_alpha 0.8 --dpi 300 --output result.png
@@ -33,3 +34,4 @@ python script.py test_data/01_02_07_20_00.dat --grid_alpha 0.5 --tick_alpha 0.8 
 - --tick_alpha TICK_ALPHA — Прозрачность подписей осей и меток
 - --dpi DPI — Разрешение изображения в DPI (точек на дюйм)
 - --output OUTPUT — Путь для сохранения изображения (по умолчанию: fullscreen_ionogram.png)
+
