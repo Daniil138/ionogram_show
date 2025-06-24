@@ -66,10 +66,10 @@ class IonogramVisualizer:
         max_freq = ionogram.passport.end_freq
 
         # Создаем модифицированную цветовую карту с белым для низких значений
-        jet = plt.cm.get_cmap('jet', 256)
+        jet = plt.get_cmap('jet', 256)
         newcolors = jet(np.linspace(0, 1, 256))
         # Делаем первые N значений белыми (можно настроить в зависимости от ваших данных)
-        newcolors[:10, :] = np.array([1, 1, 1, 1])  # белый цвет с полной непрозрачностью
+        newcolors[0, :] = np.array([1, 1, 1, 1])  # белый цвет с полной непрозрачностью
         white_jet = ListedColormap(newcolors)
 
         # Отображение данных с белым фоном для низких значений
@@ -78,8 +78,7 @@ class IonogramVisualizer:
             origin='lower',
             cmap=white_jet,
             aspect='auto',
-            extent=[min_freq, max_freq, min_height, max_height],
-            vmin=np.min(ion_arr) + 0.1 * (np.max(ion_arr) - np.min(ion_arr))  # Отсекаем самые низкие значения
+            extent=[min_freq, max_freq, min_height, max_height]  # Отсекаем самые низкие значения
         )
         
         # Настройка осей
@@ -88,11 +87,19 @@ class IonogramVisualizer:
         # Цветовая шкала
         if colorbar:
             self._add_colorbar(fig, im, alphas)
+
+        # Заголовок
+        first_line = f'{ionogram.passport.transmitter}-{ionogram.passport.receiver}'
+        second_line = f'{ionogram.passport.session_date} {ionogram.passport.session_time}'
+        title = f'{first_line}\n{second_line}'
+        ax.text(0.5, 0.97, title, transform=ax.transAxes, fontsize=20, color='black', ha='center', va='top', alpha=alphas)
         
         # Сохранение или отображение
         if path:
             plt.savefig(path, bbox_inches='tight', pad_inches=0, facecolor='white', dpi=dpi)
         plt.close()
+
+        
     
     def _configure_axes(
         self,
@@ -181,13 +188,9 @@ class IonogramVisualizer:
             ha='center'
         )
 
-        # Заголовок
-        first_line = f'{ionogram.passport.transmitter}-{ionogram.passport.receiver}'
-        second_line = f'{ionogram.passport.session_date} {ionogram.passport.session_time}'
-        title = f'{first_line}\n{second_line}'
-        ax.text(0.5, 0.97, title, transform=ax.transAxes, fontsize=20, color='black', ha='center', va='top', alpha=alphas)
+        
     
-    def _add_colorbar(self, fig, im, alphas) -> None:
+    def _add_colorbar(self, fig, im,alphas) -> None:
         """Добавляет полностью прозрачную цветовую шкалу с полупрозрачными элементами."""
         # Создаем ось для colorbar
         cax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
@@ -210,4 +213,3 @@ class IonogramVisualizer:
         cbar.ax.patch.set_alpha(0)           # Прозрачность внутренней области
         for spine in cbar.ax.spines.values(): # Прозрачность всех границ
             spine.set_alpha(alphas)
-
