@@ -166,50 +166,46 @@ class IonogramVisualizer:
                 alpha=alphas,
                 fontsize=10
             )
-        
-        # Подписи осей
-        ax.text(
-            min_freq + (max_freq - min_freq) * 0.01,
-            max_height * 0.95+20,
-            'Задержка, мс', 
-            color='black', 
-            alpha=alphas,
-            fontsize=14,
-            va='top'
-        )
-        
-        ax.text(
-            (min_freq + max_freq) / 2,
-            min_height - (max_height - min_height) * 0.05 + 60,
-            'Частота, МГц',
-            color='black',
-            alpha=alphas,
-            fontsize=14,
-            ha='center'
-        )
+        #Подписи осей
+        ax.text(0.5, 0.08, 'Частота, МГц', transform=ax.transAxes,
+                fontsize=15, color='black', ha='center', va='top', alpha=alphas)
 
-        
+        ax.text(0.08, 0.5, 'Задержка, мс', transform=ax.transAxes,
+                fontsize=15, color='black', ha='right', va='center', rotation=90, alpha=alphas)
     
-    def _add_colorbar(self, fig, im,alphas) -> None:
-        """Добавляет полностью прозрачную цветовую шкалу с полупрозрачными элементами."""
+    def _add_colorbar(self, fig, im, alphas) -> None:
+        """Добавляет цветовую шкалу с настраиваемой прозрачностью всех элементов."""
         # Создаем ось для colorbar
         cax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
         
         # Добавляем colorbar
         cbar = fig.colorbar(im, cax=cax)
         
-        # Настройка прозрачности
+        # Настройка прозрачности фона и границ
         cbar.ax.set_facecolor((0, 0, 0, 0))  # Полностью прозрачный фон
         cbar.outline.set_edgecolor('black')   # Цвет границы
-        cbar.outline.set_alpha(alphas)          # Прозрачность границы
+        cbar.outline.set_alpha(alphas)        # Прозрачность границы
         
-        # Делаем саму цветовую полосу полупрозрачной
-        cbar.solids.set_alpha(alphas)            # Прозрачность цветового градиента
+        # Прозрачность цветовой полосы
+        cbar.solids.set_alpha(alphas)         # Прозрачность градиента
         
-        # Настройка текста и делений
-        cbar.ax.tick_params(colors='black', labelsize=10)
+        # Настройка черточек (ticks) и подписей (labels)
+        cbar.ax.tick_params(
+            colors='black',         # Цвет текста и черточек (черный)
+            width=1,                # Ширина черточек
+            labelsize=10            # Размер шрифта подписей
+        )
+        for label in cbar.ax.get_yticklabels():
+            label.set_alpha(alphas)  # Устанавливаем прозрачность для подписей
+
+        # Устанавливаем прозрачность для черточек и подписей
+        for tick in cbar.ax.yaxis.get_major_ticks():
+            tick.tick1line.set_alpha(alphas)  # Основные черточки
+            tick.tick2line.set_alpha(alphas)  # Второстепенные черточки
+            
         
-        # Дополнительные настройки для полной прозрачности
-        cbar.ax.patch.set_alpha(0)           # Прозрачность внутренней области
+        # Дополнительные настройки прозрачности
+        cbar.ax.patch.set_alpha(0)            # Прозрачность внутренней области
         for spine in cbar.ax.spines.values(): # Прозрачность всех границ
             spine.set_alpha(alphas)
+            
