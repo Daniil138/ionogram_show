@@ -18,12 +18,13 @@ class IonogramVisualizer:
         :param style_settings: Словарь с настройками стиля matplotlib
         """
         self.default_style = {
-            'font.size': 12,
+            'font.size': 10,
             'text.color': 'black',
             'figure.facecolor': 'black',
             'axes.facecolor': 'black'
         }
         self.style_settings = style_settings or self.default_style
+    
         
     def show_ionogram(
         self,
@@ -33,7 +34,7 @@ class IonogramVisualizer:
         alphas: float = 0.5,
         dpi: int = 100,
         colorbar: bool = True,
-        figsize: tuple = (10, 8)
+        scale:int = 1
     ) -> None:
         """
         Отображает ионограмму с настраиваемыми параметрами.
@@ -53,6 +54,12 @@ class IonogramVisualizer:
             'figure.dpi': dpi,
             'savefig.dpi': dpi
         })
+        width_px = ion_arr.shape[0]
+        height_px = ion_arr.shape[1]
+
+        width_in = width_px / dpi
+        height_in = height_px / dpi
+        figsize=(height_in*scale,width_in*scale)
 
         # Создание фигуры с белым фоном
         fig = plt.figure(figsize=figsize, facecolor='white')
@@ -125,7 +132,7 @@ class IonogramVisualizer:
                 linestyle='--', 
                 linewidth=0.5, 
                 alpha=alphas,
-                zorder=3  # Поверх imshow
+                zorder=3  
             )
 
         # Горизонтальные линии (высоты)
@@ -151,7 +158,7 @@ class IonogramVisualizer:
                 color='black', 
                 va='center',
                 alpha=alphas,
-                fontsize=12
+                fontsize=10
             )
         
         x_ticks = np.linspace(min_freq, max_freq, 10)[1:-1]
@@ -167,11 +174,11 @@ class IonogramVisualizer:
                 fontsize=10
             )
         #Подписи осей
-        ax.text(0.5, 0.08, 'Частота, МГц', transform=ax.transAxes,
-                fontsize=15, color='black', ha='center', va='top', alpha=alphas)
+        ax.text(0.5, 0.1, 'Частота, МГц', transform=ax.transAxes,
+                fontsize=12, color='black', ha='center', va='top', alpha=alphas)
 
         ax.text(0.08, 0.5, 'Задержка, мс', transform=ax.transAxes,
-                fontsize=15, color='black', ha='right', va='center', rotation=90, alpha=alphas)
+                fontsize=12, color='black', ha='right', va='center', rotation=90, alpha=alphas)
     
     def _add_colorbar(self, fig, im, alphas) -> None:
         """Добавляет цветовую шкалу с настраиваемой прозрачностью всех элементов."""
@@ -182,30 +189,28 @@ class IonogramVisualizer:
         cbar = fig.colorbar(im, cax=cax)
         
         # Настройка прозрачности фона и границ
-        cbar.ax.set_facecolor((0, 0, 0, 0))  # Полностью прозрачный фон
-        cbar.outline.set_edgecolor('black')   # Цвет границы
-        cbar.outline.set_alpha(alphas)        # Прозрачность границы
+        cbar.ax.set_facecolor((0, 0, 0, 0)) 
+        cbar.outline.set_edgecolor('black')   
+        cbar.outline.set_alpha(alphas)        
         
-        # Прозрачность цветовой полосы
-        cbar.solids.set_alpha(alphas)         # Прозрачность градиента
+       
+        cbar.solids.set_alpha(alphas)        
         
-        # Настройка черточек (ticks) и подписей (labels)
+    
         cbar.ax.tick_params(
-            colors='black',         # Цвет текста и черточек (черный)
-            width=1,                # Ширина черточек
-            labelsize=10            # Размер шрифта подписей
+            colors='black',         
+            width=1,              
+            labelsize=10        
         )
         for label in cbar.ax.get_yticklabels():
-            label.set_alpha(alphas)  # Устанавливаем прозрачность для подписей
-
-        # Устанавливаем прозрачность для черточек и подписей
+            label.set_alpha(alphas) 
+       
         for tick in cbar.ax.yaxis.get_major_ticks():
-            tick.tick1line.set_alpha(alphas)  # Основные черточки
-            tick.tick2line.set_alpha(alphas)  # Второстепенные черточки
+            tick.tick1line.set_alpha(alphas)  
+            tick.tick2line.set_alpha(alphas)  
             
-        
         # Дополнительные настройки прозрачности
-        cbar.ax.patch.set_alpha(0)            # Прозрачность внутренней области
-        for spine in cbar.ax.spines.values(): # Прозрачность всех границ
+        cbar.ax.patch.set_alpha(0)          
+        for spine in cbar.ax.spines.values():
             spine.set_alpha(alphas)
             
