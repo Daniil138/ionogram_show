@@ -5,10 +5,12 @@ import ionread_python as ionread
 
 
 def main():
+    # Парсинг аргументов
     parser = argparse.ArgumentParser(description="Визуализация ионограммы из .dat файла.")
     parser.add_argument("file_path", type=str, help="Путь к входному .dat файлу")
     parser.add_argument("--alpha", type=float, default=1.0, help="Прозрачность (0.0 - 1.0)")
     parser.add_argument("--dpi", type=int, default=150, help="Разрешение изображения (DPI)")
+    parser.add_argument("--scale", type=int, default=1, help="Разрешение размер изображения относительно исходного массива")
     parser.add_argument("--output", type=str, default="fullscreen_ionogram.png",
                         help="Путь для сохранения изображения")
 
@@ -22,11 +24,8 @@ def main():
     try:
         # Загрузка данных
         ionogram = ionread.read_ionogram(args.file_path)
-        print(f"Данные ионограммы: {ionogram.data}")  # Проверка структуры данных
-        print(f"Паспорт ионограммы: {ionogram.passport}")  # Возможно, это метаданные
 
-        # Если SimpleIonogramArrayBuilder ожидает 'metadata', можно попробовать передать passport
-        # Или модифицировать класс, чтобы он принимал passport
+        # Получение массива 
         ionogram_array = SimpleIonogramArrayBuilder(ionogram).process().get_ndarray()
 
         # Визуализация

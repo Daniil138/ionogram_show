@@ -81,4 +81,7 @@ cd ionogram_show
 Устанавливаем 
 ```
 pip instal ./
+
 ```
+
+

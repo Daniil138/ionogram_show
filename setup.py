@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from setuptools import setup, find_packages
 
 setup(
@@ -18,8 +19,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={
-        'ionogram_visualizer': '.',
-    },
     python_requires='>=3.7',
 )
